@@ -1,7 +1,7 @@
 from enum import auto, Enum
 
 class TokenType(Enum):
-    INTEGER = auto()
+    NUMBER = auto()
     PLUS = auto()
     MINUS = auto()
     EOS = auto()
@@ -16,10 +16,3 @@ class Token():
 
     def __repr__(self):
         return str(self)
-
-if __name__ == "__main__":
-    print(list(TokenType))
-
-    t = Token(TokenType.INTEGER, "2")
-    print(t)
-    print([t])

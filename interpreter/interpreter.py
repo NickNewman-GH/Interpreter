@@ -17,7 +17,7 @@ class Interpreter():
                 self.skip()
                 continue
             if self._current_char.isdigit():
-                return Token(TokenType.INTEGER, self._integer())
+                return Token(TokenType.NUMBER, self._number())
             if self._current_char == "+":
                 char = self._current_char
                 self._forward()
@@ -40,11 +40,20 @@ class Interpreter():
         while self._current_char == ' ':
             self._forward()
 
-    def _integer(self):
+    def _number(self):
         result: list = []
-        while self._current_char and self._current_char.isdigit():
+        left = None
+        while self._current_char and (self._current_char.isdigit() or self._current_char == '.'):
+            if left:
+                if self._current_char == '.' and not left.isdigit():
+                    raise InterpreterException("Wrong number")
+                elif not self._current_char.isdigit() and left == '.':
+                    raise InterpreterException("Wrong number")
             result.append(self._current_char)
+            left = self._current_char
             self._forward()
+        if left == '.':
+            raise InterpreterException("Wrong number")
         return  "".join(result)
 
     def _check_token_type(self, type_: TokenType):
@@ -56,18 +65,18 @@ class Interpreter():
     def _expr(self) -> int:
         self._current_token = self._next_token()
         left = self._current_token
-        self._check_token_type(TokenType.INTEGER)
+        self._check_token_type(TokenType.NUMBER)
         operator = self._current_token
         if operator.type_ == TokenType.PLUS:
             self._check_token_type(TokenType.PLUS)
         else:
             self._check_token_type(TokenType.MINUS)
         right = self._current_token
-        self._check_token_type(TokenType.INTEGER)
+        self._check_token_type(TokenType.NUMBER)
         if operator.type_ == TokenType.PLUS:
-            return int(left.value) + int(right.value)
+            return float(left.value) + float(right.value)
         elif operator.type_ == TokenType.MINUS:
-            return int(left.value) - int(right.value)
+            return float(left.value) - float(right.value)
         raise InterpreterException(f"Bad token {operator}")
 
 
