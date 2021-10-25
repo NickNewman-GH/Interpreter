@@ -14,14 +14,17 @@ class Interpreter():
     def _next_token(self) -> Token:
         while self._current_char != None:
             if self._current_char.isdigit():
+                char = self._current_char
                 self._forward()
-                return Token(TokenType.INTEGER, self._current_char)
+                return Token(TokenType.INTEGER, char)
             if self._current_char == "+":
+                char = self._current_char
                 self._forward()
-                return Token(TokenType.PLUS, self._current_char)
+                return Token(TokenType.PLUS, char)
             if self._current_char == "-":
+                char = self._current_char
                 self._forward()
-                return Token(TokenType.MINUS, self._current_char)
+                return Token(TokenType.MINUS, char)
             raise InterpreterException(f"Bad token {self._current_char}")
         return Token(TokenType.EOS, None)
 
