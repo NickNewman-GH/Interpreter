@@ -5,4 +5,4 @@ if __name__ == "__main__":
     #print(interpreter("2 + 2"))
     #print(interpreter.interpret("23 + 32"))
     #print(interpreter("2 - 2"))
-    print(interpreter.interpret("2 - 5."))
+    print(interpreter.interpret("2 + 5"))
