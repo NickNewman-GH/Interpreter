@@ -1,41 +1,35 @@
+from os import PathLike
+from types import resolve_bases
 from .tokens import TokenType, Token
 from .lexer import Lexer
+from .node import Node, Number, BinOp
 
 class InterpreterException(Exception):
     pass
 
 class Interpreter():
     
-    def __init__(self):
-        self._current_token: Token = None
-        self._lexer = Lexer()
+    def interpret(self, tree: Node) -> float:
+        return self._visit(tree)
 
-    def _check_token_type(self, type_: TokenType):
-        if self._current_token.type_ == type_:
-            self._current_token = self._lexer.next()
-        else:
-            raise InterpreterException("Invalid token order")
+    def _visit(self, node: Node) -> float:
+        if isinstance(node, Number):
+            return self._visit_number(node)
+        elif isinstance(node, BinOp):
+            return self._visit_binop(node)
+        raise InterpreterException("invalid node")
 
-    def _expr(self) -> int:
-        self._current_token = self._lexer.next()
-        left = self._current_token
-        self._check_token_type(TokenType.NUMBER)
-        operator = self._current_token
-        if operator.type_ == TokenType.PLUS:
-            self._check_token_type(TokenType.PLUS)
-        else:
-            self._check_token_type(TokenType.MINUS)
-        right = self._current_token
-        self._check_token_type(TokenType.NUMBER)
-        if operator.type_ == TokenType.PLUS:
-            return float(left.value) + float(right.value)
-        elif operator.type_ == TokenType.MINUS:
-            return float(left.value) - float(right.value)
-        raise InterpreterException(f"Bad token {operator}")
+    def _visit_number(self, node: Node) -> float:
+        return float(node.token.value)
 
-    def __call__(self, text : str) -> int:
-        return self.interpret(text)
-
-    def interpret(self, text : str) -> int:
-        self._lexer.init(text)
-        return self._expr()
+    def _visit_binop(self, node: BinOp) -> float:
+        op = node.op
+        if op.type_ == TokenType.PLUS:
+            return self._visit(node.left) + self._visit(node.right)
+        elif op.type_ == TokenType.MINUS:
+            return self._visit(node.left) - self._visit(node.right)
+        elif op.type_ == TokenType.MUL:
+            return self._visit(node.left) * self._visit(node.right)
+        elif op.type_ == TokenType.DIV:
+            return self._visit(node.left) / self._visit(node.right)
+        raise InterpreterException("invalid operator")

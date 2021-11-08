@@ -1,8 +1,12 @@
 from interpreter import Interpreter
+from interpreter import Parser
+import interpreter
 
 if __name__ == "__main__":
+    parcer = Parser()
+    tree = parcer.parse("2 * (2 + 3)")
     interpreter = Interpreter()
-    #print(interpreter("2 + 2"))
-    #print(interpreter.interpret("23 + 32"))
-    #print(interpreter("2 - 2"))
-    print(interpreter.interpret("2 + 5"))
+    print(interpreter.interpret(tree))
+    tree = parcer.parse("2 * 2 + 3")
+    print(interpreter.interpret(tree))
+    

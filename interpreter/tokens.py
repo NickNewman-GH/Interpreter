@@ -4,6 +4,8 @@ class TokenType(Enum):
     NUMBER = auto()
     PLUS = auto()
     MINUS = auto()
+    LPAREN = auto()
+    RPAREN = auto()
     MUL = auto()
     DIV = auto()
     EOS = auto()
